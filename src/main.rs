@@ -19,7 +19,7 @@ use ratatui::{
 use rustfft::{FftPlanner, num_complex::Complex};
 
 const RATE: usize = 44100;
-const N: usize = 2048; // FFT size
+const N: usize = 2048;
 const BANDS: usize = 64;
 
 fn default_monitor() -> String {
@@ -28,25 +28,6 @@ fn default_monitor() -> String {
         .output()
         .expect("pactl not found");
     format!("{}.monitor", String::from_utf8_lossy(&out.stdout).trim())
-}
-
-fn hsv(h: f32, s: f32, v: f32) -> Color {
-    let c = v * s;
-    let x = c * (1.0 - ((h / 60.0) % 2.0 - 1.0).abs());
-    let m = v - c;
-    let (r, g, b) = match h as u32 {
-        0..=59 => (c, x, 0.0),
-        60..=119 => (x, c, 0.0),
-        120..=179 => (0.0, c, x),
-        180..=239 => (0.0, x, c),
-        240..=299 => (x, 0.0, c),
-        _ => (c, 0.0, x),
-    };
-    Color::Rgb(
-        ((r + m) * 255.0) as u8,
-        ((g + m) * 255.0) as u8,
-        ((b + m) * 255.0) as u8,
-    )
 }
 
 fn audio_thread(bands: Arc<Mutex<Vec<f32>>>) {
@@ -136,11 +117,7 @@ fn main() -> std::io::Result<()> {
                     Bar::default()
                         .value((v * 100.0) as u64)
                         .text_value(String::new())
-                        .style(Style::default().fg(hsv(
-                            180.0 + i as f32 / shown as f32 * 140.0, // cyan -> purple
-                            0.85,
-                            0.5 + v * 0.5,
-                        )))
+                        .style(Style::default().fg(Color::Rgb(204, 101, 0)))
                 })
                 .collect();
 
